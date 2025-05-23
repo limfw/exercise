@@ -2,7 +2,7 @@ import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Scenario introduction
+# Scenario description
 scenario_description = """
 ### 📘 Scenario: HealthGear+ Analytics Task
 
@@ -20,7 +20,7 @@ You are a machine learning analyst at **HealthGear+**, a company that produces w
 - Sensor noise rate and environmental conditions (air quality, temperature)
 """
 
-# Define questions and expected answers
+# QA dictionary
 qa_data = {
     "a": {
         "question": "You are tasked with grouping users to provide personalized health tips using wearable device data. Based on the features available in the dataset, select a clustering algorithm to build meaningful user segments. Justify your choice based on how the algorithm handles the structure of this data.",
@@ -64,28 +64,38 @@ qa_data = {
     }
 }
 
-# Streamlit app
+# Page UI
 st.title("HealthGear+ ML Strategy Assignment")
-
 st.markdown(scenario_description)
 
-selected_key = st.selectbox("Select a question (a-j):", options=list(qa_data.keys()))
-st.markdown(f"**Question ({selected_key}):** {qa_data[selected_key]['question']}")
+# Create a form-like layout
+student_inputs = {}
+st.header("📝 Submit Your Answers")
+with st.form("qa_form"):
+    for key in qa_data:
+        st.markdown(f"**({key}) {qa_data[key]['question']}**")
+        student_inputs[key] = st.text_area(f"Your Answer to Question ({key})", key=f"input_{key}")
 
-student_answer = st.text_area("Enter your answer here:")
+    submitted = st.form_submit_button("Submit Answers")
 
-if student_answer:
-    corpus = [student_answer, qa_data[selected_key]["answer"]]
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(corpus)
-    similarity_score = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2]).item()
+# After submit, compute similarity
+if submitted:
+    st.header("📊 Similarity Scores")
+    for key in qa_data:
+        student_ans = student_inputs[key]
+        model_ans = qa_data[key]["answer"]
+        if student_ans.strip():
+            corpus = [student_ans, model_ans]
+            vectorizer = TfidfVectorizer()
+            tfidf_matrix = vectorizer.fit_transform(corpus)
+            score = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2]).item()
 
-    st.subheader("Similarity Score")
-    st.write(f"**{similarity_score:.2f}**")
-
-    if similarity_score >= 0.80:
-        st.success("✅ Strong match – your answer is highly aligned with the expected answer.")
-    elif similarity_score >= 0.50:
-        st.warning("⚠️ Partial match – consider revising or expanding your answer.")
-    else:
-        st.error("❌ Weak match – please review the concepts and try again.")
+            st.markdown(f"**Question ({key}) Similarity: {score:.2f}**")
+            if score >= 0.80:
+                st.success("✅ Strong match – well aligned with the model answer.")
+            elif score >= 0.50:
+                st.warning("⚠️ Partial match – good start, but can be improved.")
+            else:
+                st.error("❌ Weak match – revise your answer.")
+        else:
+            st.info(f"ℹ️ No answer submitted for question ({key}).")
