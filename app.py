@@ -65,7 +65,7 @@ qa_data = {
 }
 
 # Page UI
-st.title("HealthGear+ ML Strategy Assignment")
+st.title("Exercise !!! ")
 
 # Introductory message to inspire students
 st.markdown("""
