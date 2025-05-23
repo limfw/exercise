@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Scenario description
 scenario_description = """
-### 📘 Scenario: HealthGear+ Analytics Task
+### Scenario: HealthGear+ Analytics Task
 
 You are a machine learning analyst at **HealthGear+**, a company that produces wearable health-tracking devices for sports and elderly care. The company wants to expand its analytics capabilities by developing two key solutions:
 
@@ -66,11 +66,28 @@ qa_data = {
 
 # Page UI
 st.title("HealthGear+ ML Strategy Assignment")
+
+# Introductory message to inspire students
+st.markdown("""
+This isn’t just a tool to check answers — it’s built to inspire you to think like a **machine learning engineer or data professional**.
+
+Through this exercise, I hope you begin to explore:
+
+-  How practical ML techniques (like similarity checking) are built using real Python tools.
+-  How interactive tools can enhance learning, encouraging you to test, reflect, and iterate.
+-  How simple ideas can evolve into real-world apps — built in Python, shared on GitHub, and deployed via Streamlit Cloud.
+
+Most importantly, I want this experience to help you ask:
+> “ What skills should I equip myself with to become a better data professional?  ”_
+""")
+
+
+
 st.markdown(scenario_description)
 
 # Create a form-like layout
 student_inputs = {}
-st.header("📝 Submit Your Answers")
+st.header("Submit Your Answers")
 with st.form("qa_form"):
     for key in qa_data:
         st.markdown(f"**({key}) {qa_data[key]['question']}**")
@@ -80,7 +97,7 @@ with st.form("qa_form"):
 
 # After submit, compute similarity
 if submitted:
-    st.header("📊 Similarity Scores")
+    st.header("Similarity Scores")
     for key in qa_data:
         student_ans = student_inputs[key]
         model_ans = qa_data[key]["answer"]
@@ -92,10 +109,10 @@ if submitted:
 
             st.markdown(f"**Question ({key}) Similarity: {score:.2f}**")
             if score >= 0.80:
-                st.success("✅ Strong match – well aligned with the model answer.")
+                st.success("Strong match – well aligned with the model answer.")
             elif score >= 0.50:
-                st.warning("⚠️ Partial match – good start, but can be improved.")
+                st.warning("Partial match – good start, but can be improved.")
             else:
-                st.error("❌ Weak match – revise your answer.")
+                st.error("Weak match – revise your answer.")
         else:
-            st.info(f"ℹ️ No answer submitted for question ({key}).")
+            st.info(f" No answer submitted for question ({key}).")
